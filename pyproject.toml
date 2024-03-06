@@ -1,8 +1,8 @@
 [project]
-name = "example_package_YOUR_USERNAME_HERE"
+name = "LibreSplat_Sigge_REDACTED"
 version = "0.1.0"
 authors = [
-  { name="Sigge[REDACTED]", email="REDACTED" },
+  { name="Sigge[REDACTED]", email="REDACTED@redact.com" },
 ]
 description = "A small example package"
 readme = "README.md"
