@@ -28,7 +28,7 @@ def run(function, reportserver, root=None,*args):
     snapshot = None
     traceback_str = None
     try:
-        tracemalloc.start(200)
+        tracemalloc.start(1000)
         function(*args)
         tracemalloc.stop()
     except Exception as e:
