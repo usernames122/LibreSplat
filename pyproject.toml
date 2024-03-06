@@ -1,5 +1,5 @@
 [project]
-name = "LibreSplat_Sigge_REDACTED"
+name = "LibreSplat"
 version = "0.1.0"
 authors = [
   { name="Sigge[REDACTED]", email="REDACTED@redact.com" },
