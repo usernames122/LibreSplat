@@ -11,6 +11,7 @@ import io
 import requests
 import traceback
 import subprocess
+import _thread
 from base64 import b64encode
 witty_comments = [
     "Looks like our code decided to take an unscheduled coffee break!",
@@ -85,7 +86,12 @@ def run(function, reportserver, root=None,*args):
         pickle.dump(snapshot, bytes_io) # serialize the snapshot to be used later in the memory analyzer
         bytes_io.seek(0)
         data = {'log':b64encode(open(fileloc,"rb").read()).decode(),'snapshot':b64encode(bytes_io.read()).decode()}
-        response = requests.post(reportserver, json=data)
+        response = None
+        def get():
+            response = requests.post(reportserver, json=data)
+        _thread.start_new_thread(get,())
+        while response is None:
+            rootwin.update()
         bytes_io.close()
         rootwin.destroy()
     label.pack(padx=10, pady=10)
