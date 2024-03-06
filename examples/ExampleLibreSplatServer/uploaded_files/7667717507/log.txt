@@ -1,0 +1,11 @@
+=============LibreSplat crash report=============
+
+// Well, that's one way to make an unexpected exit.
+
+
+Python version is 3.11.1 (tags/v3.11.1:a7a450f, Dec  6 2022, 19:58:39) [MSC v.1934 64 bit (AMD64)]
+Traceback (most recent call last):
+  File "C:\Users\sigge\AppData\Local\Programs\Python\Python311\Lib\site-packages\LibreSplat\LibreSplat.py", line 34, in run
+    function(*args)
+  File "<stdin>", line 1, in <lambda>
+ZeroDivisionError: division by zero
