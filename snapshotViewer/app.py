@@ -17,6 +17,7 @@ class SafeUnpickler(pickle.Unpickler):
 def safe_loads(s):
     return SafeUnpickler(io.BytesIO(s)).load()
 root = Tk()
+root.title("PickleView")
 button1 = Button(root, text="Select Pickle",command=lambda:update_ui(SafeUnpickler(askopenfile(mode ='r+b', filetypes =[('Snapshot files', '*.pickle')])).load()))
 button1.grid(row=0, column=0)
 sizevar = StringVar()
