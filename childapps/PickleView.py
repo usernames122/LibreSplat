@@ -18,6 +18,8 @@ def safe_loads(s):
     return SafeUnpickler(io.BytesIO(s)).load()
 root = Tk()
 root.title("PickleView")
+root.geometry('300x200')
+root.grid_columnconfigure(0, weight=1)
 button1 = Button(root, text="Select Pickle",command=lambda:update_ui(SafeUnpickler(askopenfile(mode ='r+b', filetypes =[('Snapshot files', '*.pickle')])).load()))
 button1.grid(row=0, column=0)
 sizevar = StringVar()
