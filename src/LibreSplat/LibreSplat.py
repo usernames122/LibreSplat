@@ -1,7 +1,8 @@
 # LibreSplat
 # Created by Sigge [REDACTED]
-import tkinter as tk
-from tkinter import ttk
+from tkinter import *
+from tkinter.ttk import *
+from tkinter import Label
 import os
 import random
 import tracemalloc
@@ -12,6 +13,8 @@ import requests
 import traceback
 import subprocess
 import _thread
+import time
+
 from base64 import b64encode
 witty_comments = [
     "Looks like our code decided to take an unscheduled coffee break!",
@@ -43,7 +46,7 @@ def run(function, reportserver, root=None,*args):
         return
     rootwin = None
     if root is None:
-        rootwin = tk.Tk()
+        rootwin = Tk()
     else:
         rootwin = tk.Toplevel(root)
     fileloc = os.environ["TEMP"] + "\\LibreSplat-CrashReport." + str(random.randint(1,9999)) + ".txt"
@@ -53,7 +56,7 @@ def run(function, reportserver, root=None,*args):
         f.write("Python version is " + sys.version + "\n")
         f.write(traceback_str)
     rootwin.title("LibreSplat error reporter")
-    label = tk.Label(rootwin, text="The program has crashed.\nWould you like to report or view the report?", relief="sunken", padx=5, pady=5, wraplength=200, justify="left", anchor="nw")
+    label = Label(rootwin, text="The program has crashed.\nWould you like to report or view the report?", relief="sunken", padx=5, pady=5, wraplength=200, justify="left", anchor="nw")
     label.config(font=("Arial", 12), bg="white", bd=1, highlightthickness=1, highlightbackground="black")
     def owde(file_path): # OWDE stands for Open With Default Editor
         try:
@@ -74,10 +77,10 @@ def run(function, reportserver, root=None,*args):
         button1.destroy()
         button2.destroy()
         button3.destroy()
-        label = tk.Label(rootwin, text="Please wait..\nUploading error log to server...", relief="sunken", padx=5, pady=5, wraplength=200, justify="left", anchor="nw")
+        label = Label(rootwin, text="Please wait..\nUploading error log to server...", relief="sunken", padx=5, pady=5, wraplength=200, justify="left", anchor="nw")
         label.config(font=("Arial", 12), bg="white", bd=1, highlightthickness=1, highlightbackground="black")
         label.pack(padx=10, pady=10)
-        progressbar = ttk.Progressbar(rootwin, orient="horizontal", length=300, mode="indeterminate")
+        progressbar = Progressbar(rootwin, orient="horizontal", length=300, mode="indeterminate")
         progressbar.pack(pady=10)
         progressbar.start()
         if root is None:
@@ -88,20 +91,36 @@ def run(function, reportserver, root=None,*args):
         data = {'log':b64encode(open(fileloc,"rb").read()).decode(),'snapshot':b64encode(bytes_io.read()).decode()}
         response = None
         def get():
-            response = requests.post(reportserver, json=data)
+            nonlocal label
+            nonlocal progressbar
+            try:
+                response = requests.post(reportserver, json=data)
+            except Exception as e:
+                label.destroy()
+                progressbar.destroy()
+                label = Label(rootwin, text="Failed to upload to server.", relief="sunken", padx=5, pady=5, wraplength=200, justify="left", anchor="nw")
+                label.config(font=("Arial", 12), bg="white", bd=1, highlightthickness=1, highlightbackground="black")
+                label.pack(padx=10, pady=10)
+                rootwin.update()
+                time.sleep(2.5)
+                bytes_io.close()
+                rootwin.destroy()
         _thread.start_new_thread(get,())
-        while response is None:
-            rootwin.update()
-        bytes_io.close()
-        rootwin.destroy()
+        try:
+            while response is None:
+                rootwin.update()
+            bytes_io.close()
+            rootwin.destroy()
+        except:
+            pass
     label.pack(padx=10, pady=10)
-    button1 = tk.Button(root, text="Send report",command=send)
-    button1.pack(side=tk.LEFT)
+    button1 = Button(root, text="Send report",command=send)
+    button1.pack(side=LEFT)
 
-    button2 = tk.Button(root, text="Do not send report",command=rootwin.destroy)
-    button2.pack(side=tk.LEFT)
-    button3 = tk.Button(root, text="View report",command=lambda:owde(fileloc))
-    button3.pack(side=tk.LEFT)
+    button2 = Button(root, text="Do not send report",command=rootwin.destroy)
+    button2.pack(side=LEFT)
+    button3 = Button(root, text="View report",command=lambda:owde(fileloc))
+    button3.pack(side=LEFT)
     if root is None:
         rootwin.mainloop()
 if __name__ == "__main__":
